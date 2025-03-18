@@ -3,6 +3,7 @@ package com.anonymous.inshorts_movies_task.ui.details;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.google.android.material.button.MaterialButton;
 
 public class MovieDetailsFragment extends Fragment {
 
+    private static final String TAG = "MovieDetailsFragment";
     private static final String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
     private static final String DEEP_LINK_PREFIX = "inshortsmovies://movie/";
 
@@ -68,9 +70,11 @@ public class MovieDetailsFragment extends Fragment {
     }
 
     private void loadMovieDetails(int movieId) {
+        Log.d(TAG, "Loading movie details for ID: " + movieId);
         viewModel.getMovieById(movieId).observe(getViewLifecycleOwner(), movie -> {
             if (movie != null) {
                 currentMovie = movie;
+                Log.d(TAG, "Loaded movie: " + movie.getTitle() + ", bookmark status: " + movie.isBookmarked());
                 displayMovieDetails(movie);
                 updateBookmarkButton(movie.isBookmarked());
             }
@@ -103,6 +107,8 @@ public class MovieDetailsFragment extends Fragment {
     private void toggleBookmark() {
         if (currentMovie != null) {
             boolean newBookmarkState = !currentMovie.isBookmarked();
+            Log.d(TAG, "Toggling bookmark for movie: " + currentMovie.getTitle() + 
+                  " from " + currentMovie.isBookmarked() + " to " + newBookmarkState);
             viewModel.bookmarkMovie(currentMovie, newBookmarkState);
             updateBookmarkButton(newBookmarkState);
         }

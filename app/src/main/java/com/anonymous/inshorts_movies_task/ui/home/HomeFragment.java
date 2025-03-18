@@ -1,6 +1,7 @@
 package com.anonymous.inshorts_movies_task.ui.home;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.anonymous.inshorts_movies_task.ui.adapter.MovieAdapter;
 
 public class HomeFragment extends Fragment implements MovieAdapter.OnMovieClickListener {
     
+    private static final String TAG = "HomeFragment";
     private static final String ARG_MOVIE_ID = "movieId";
     
     private HomeViewModel viewModel;
@@ -30,17 +32,25 @@ public class HomeFragment extends Fragment implements MovieAdapter.OnMovieClickL
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView");
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Log.d(TAG, "onViewCreated");
         
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         
         setupRecyclerViews(view);
         observeViewModel();
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume - fragment is now visible to the user");
     }
 
     private void setupRecyclerViews(View view) {
@@ -59,16 +69,19 @@ public class HomeFragment extends Fragment implements MovieAdapter.OnMovieClickL
 
     private void observeViewModel() {
         viewModel.getTrendingMovies().observe(getViewLifecycleOwner(), movies -> {
+            Log.d(TAG, "Received trending movies update: " + (movies != null ? movies.size() : 0) + " movies");
             trendingAdapter.submitList(movies);
         });
         
         viewModel.getNowPlayingMovies().observe(getViewLifecycleOwner(), movies -> {
+            Log.d(TAG, "Received now playing movies update: " + (movies != null ? movies.size() : 0) + " movies");
             nowPlayingAdapter.submitList(movies);
         });
     }
 
     @Override
     public void onMovieClick(Movie movie) {
+        Log.d(TAG, "Clicked on movie: " + movie.getTitle() + ", ID: " + movie.getId() + ", Bookmarked: " + movie.isBookmarked());
         Bundle args = new Bundle();
         args.putInt(ARG_MOVIE_ID, movie.getId());
         Navigation.findNavController(requireView())
