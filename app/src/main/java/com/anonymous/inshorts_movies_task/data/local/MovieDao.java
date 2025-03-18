@@ -31,6 +31,9 @@ public interface MovieDao {
     @Query("SELECT * FROM movies WHERE id = :movieId")
     Flowable<Movie> getMovieById(int movieId);
 
+    @Query("SELECT * FROM movies WHERE id = :movieId")
+    Single<List<Movie>> getMovieByIdSync(int movieId);
+
     @Query("SELECT * FROM movies WHERE title LIKE '%' || :query || '%'")
     Flowable<List<Movie>> searchMovies(String query);
 } 

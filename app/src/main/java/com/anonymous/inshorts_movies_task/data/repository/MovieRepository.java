@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -72,15 +73,15 @@ public class MovieRepository {
 
     public void bookmarkMovie(Movie movie, boolean isBookmarked) {
         movie.setBookmarked(isBookmarked);
-        disposables.add(
+        
+        try {
             movieDao.updateMovie(movie)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    () -> Log.d(TAG, "Movie bookmark status updated successfully"),
-                    throwable -> Log.e(TAG, "Error updating movie bookmark status", throwable)
-                )
-        );
+                .blockingAwait();
+            Log.d(TAG, "Movie bookmark status updated successfully");
+        } catch (Exception e) {
+            Log.e(TAG, "Error updating movie bookmark status", e);
+        }
     }
 
     public Flowable<List<Movie>> searchMovies(String query) {
@@ -96,7 +97,9 @@ public class MovieRepository {
                 .map(response -> {
                     List<Movie> movies = new ArrayList<>();
                     for (MovieResponse.MovieDto movieDto : response.getResults()) {
-                        movies.add(movieDto.toMovie("trending"));
+                        Movie newMovie = movieDto.toMovie("trending");
+                        checkAndApplyBookmarkStatus(newMovie);
+                        movies.add(newMovie);
                     }
                     return movies;
                 })
@@ -117,7 +120,9 @@ public class MovieRepository {
                 .map(response -> {
                     List<Movie> movies = new ArrayList<>();
                     for (MovieResponse.MovieDto movieDto : response.getResults()) {
-                        movies.add(movieDto.toMovie("now_playing"));
+                        Movie newMovie = movieDto.toMovie("now_playing");
+                        checkAndApplyBookmarkStatus(newMovie);
+                        movies.add(newMovie);
                     }
                     return movies;
                 })
@@ -138,7 +143,9 @@ public class MovieRepository {
                 .map(response -> {
                     List<Movie> movies = new ArrayList<>();
                     for (MovieResponse.MovieDto movieDto : response.getResults()) {
-                        movies.add(movieDto.toMovie("search"));
+                        Movie newMovie = movieDto.toMovie("search");
+                        checkAndApplyBookmarkStatus(newMovie);
+                        movies.add(newMovie);
                     }
                     return movies;
                 })
@@ -149,6 +156,23 @@ public class MovieRepository {
                     throwable -> Log.e(TAG, "Failed to refresh search results", throwable)
                 )
         );
+    }
+
+    private void checkAndApplyBookmarkStatus(Movie newMovie) {
+        try {
+            List<Movie> existingMovies = movieDao.getMovieByIdSync(newMovie.getId())
+                .subscribeOn(Schedulers.io())
+                .blockingGet();
+            
+            if (existingMovies != null && !existingMovies.isEmpty()) {
+                Movie existingMovie = existingMovies.get(0);
+                newMovie.setBookmarked(existingMovie.isBookmarked());
+                Log.d(TAG, "Applied bookmark status: " + existingMovie.isBookmarked() + 
+                      " to movie: " + newMovie.getTitle());
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "No existing bookmark status found for movie: " + newMovie.getTitle());
+        }
     }
 
     public void dispose() {

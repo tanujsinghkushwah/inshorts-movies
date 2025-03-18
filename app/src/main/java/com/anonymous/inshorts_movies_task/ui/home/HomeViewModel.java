@@ -6,8 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.LiveDataReactiveStreams;
-import androidx.lifecycle.MutableLiveData;
 
+import com.anonymous.inshorts_movies_task.MoviesApplication;
 import com.anonymous.inshorts_movies_task.data.model.Movie;
 import com.anonymous.inshorts_movies_task.data.repository.MovieRepository;
 
@@ -26,7 +26,7 @@ public class HomeViewModel extends AndroidViewModel {
 
     public HomeViewModel(@NonNull Application application) {
         super(application);
-        repository = new MovieRepository(application);
+        repository = ((MoviesApplication) application).getRepository();
     }
 
     public LiveData<List<Movie>> getTrendingMovies() {
@@ -41,6 +41,5 @@ public class HomeViewModel extends AndroidViewModel {
     protected void onCleared() {
         super.onCleared();
         disposables.clear();
-        repository.dispose();
     }
 } 
