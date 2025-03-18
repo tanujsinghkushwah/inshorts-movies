@@ -2,6 +2,15 @@
 
 An Android application that displays trending and now playing movies from The Movie Database (TMDB) API, allows searching for movies, and bookmarking favorites.
 
+APK download link: https://github.com/tanujsinghkushwah/inshorts-movies/blob/master/apk/inshorts-movies.apk
+
+## Screenshots
+
+| Home & Search | Bookmarks & Now Playing |
+|--------------|----------------|
+| ![Home](https://github.com/user-attachments/assets/1c307259-f5ba-40b8-80e8-24f16964a7d8) | ![Bookmarks](https://github.com/user-attachments/assets/095989cb-7cf8-41ee-a2bd-c957dffb0778) |
+| ![Now Playing](https://github.com/user-attachments/assets/b75ec846-e1ee-4171-b2a9-a2f3f56ab625) | ![Details](https://github.com/user-attachments/assets/0cafa6f4-e4f5-476b-be4b-72bd270205ed) |
+
 ## Features
 
 - View trending movies
