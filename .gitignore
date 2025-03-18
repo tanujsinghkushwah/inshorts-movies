@@ -18,12 +18,6 @@ out/
 # Gradle files
 .gradle/
 build/
-# Exclude build/outputs/apk/debug/ from being ignored
-!build/outputs/
-build/outputs/*
-!build/outputs/apk/
-build/outputs/apk/*
-!build/outputs/apk/debug/
 
 # Local configuration file (sdk path, etc)
 local.properties
