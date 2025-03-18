@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+    Template file for API keys.
+    Copy this file to app/src/main/res/values/api_keys.xml and replace the placeholder with your actual API key.
+    The api_keys.xml file is listed in .gitignore and won't be tracked by Git.
+-->
+<resources>
+    <string name="tmdb_api_key">YOUR_TMDB_API_KEY_HERE</string>
+</resources> 
