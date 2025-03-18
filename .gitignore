@@ -82,3 +82,6 @@ lint/tmp/
 
 # Gradle wrapper
 !gradle/wrapper/gradle-wrapper.jar
+
+# API Keys and Secrets
+app/src/main/res/values/api_keys.xml
